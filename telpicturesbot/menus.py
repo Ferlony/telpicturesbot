@@ -42,7 +42,7 @@ class Menu:
                 if conformation():
                     self.bot_tele.send_file_to_chat_id(file)
             elif inp == "8":
-                pass  # TODO: edit config menu
+                pass  # TODO: edit config menu and json creator
             elif inp == "0":
                 print("Closing program")
                 break
@@ -62,10 +62,11 @@ class Menu:
             elif inp == "2":
                 print(asyncio.run(self.bot_tele.get_update_info()))  # Should send message to the bot
             elif inp == "3":
-                print("Files in dir:\n", self.bot_tele.files_in_dir)
-                print("Files status:\n", self.bot_tele.picture_index_current + "/" + self.bot_tele.files_in_dir_amount)
+                print("Files in dir:\n", self.bot_tele.files_list)
+                print("Files status:\n", str(self.bot_tele.pictures_index) + "/" +
+                      str(self.bot_tele.files_list_amount))
             elif inp == "4":
-                print("Files extensions:\n", self.bot_tele.files_types_in_dir)
+                print("Files extensions:\n", self.bot_tele.files_types_in_list)
             elif inp == "0":
                 print("Back")
                 break

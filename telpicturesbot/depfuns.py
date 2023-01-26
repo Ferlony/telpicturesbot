@@ -1,4 +1,6 @@
 import os
+import json
+from os import sep
 
 
 def get_files_in_dir(directory):
@@ -33,7 +35,29 @@ def conformation():
             print("Wrong input")
 
 
-# TODO
-def file_checker():
+# TODO need to change logic
+def file_checker(file):
+    json_file_location = "local" + sep + "allowed_formats.json"
 
+    json_file = open(json_file_location, "r")
+    allowed_formats = json.load(json_file)
+    json_file.close()
+
+    allowed_formats_list_dooble = []
+
+    for key, types in allowed_formats.items():
+        print(key)
+        allowed_formats_list_dooble.append(types)
+
+    file_name, file_extension = os.path.splitext(file)
+
+    for i in range(0, len(allowed_formats_list_dooble)):
+        for j in range(0, len(allowed_formats_list_dooble[i])):
+            if file_extension == allowed_formats_list_dooble[i][j]:
+                return True
+
+    return False
+
+# TODO filelist for types
+def file_list():
     return

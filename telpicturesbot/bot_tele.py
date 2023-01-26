@@ -7,18 +7,21 @@ import os
 import asyncio
 from datetime import datetime
 import depfuns
+from config_class import ConfigClass
 
 
-class BotTele:
-    def __init__(self, token, user_id, chat_id, private, picture_location_default=None, picture_index=0):
+class BotTele(ConfigClass):
+    def __init__(self, token, user_id, chat_id, private, config_path, picture_location_default):
+        ConfigClass.__init__(self, config_path, "INDEXES")
         self.__TOKEN = token
         self.__USER_ID = user_id
         self.__CHAT_ID = chat_id
         self.__PRIVATE = private
-        self.__PICTURE_LOCATION_DEFAULT = picture_location_default
 
-        self.__picture_index = picture_index
-        self.__files_list, self.__files_list_amount = depfuns.get_files_in_dir(self.__PICTURE_LOCATION_DEFAULT)
+        self.__picture_location = picture_location_default
+        self.__pictures_index = self.get_key_value_in_config(self.__picture_location)
+
+        self.__files_list, self.__files_list_amount = depfuns.get_files_in_dir(self.__picture_location)
 
     __threads = {}
 
@@ -26,28 +29,32 @@ class BotTele:
     __started_without_polling_flag = False
 
     @property
-    def files_in_dir(self):
+    def files_list(self):
         return self.__files_list
 
     @property
-    def files_in_dir_amount(self):
+    def files_list_amount(self):
         return self.__files_list_amount
 
     @property
-    def picture_index_current(self):
-        return self.__picture_index
-
-    @property
-    def files_types_in_dir(self):
+    def files_types_in_list(self):
         return depfuns.get_file_types_in_list(self.__files_list)
 
     @property
+    def pictures_index(self):
+        return self.__pictures_index
+
+    @pictures_index.setter
+    def pictures_index(self, value):
+        self.__pictures_index = self.set_key_value_in_config(self.__picture_location, value)
+
+    @property
     def picture_location(self):
-        return self.__PICTURE_LOCATION_DEFAULT
+        return self.__picture_location
 
     @picture_location.setter
     def picture_location(self, new_picture_location):
-        self.__PICTURE_LOCATION_DEFAULT = new_picture_location
+        self.__picture_location = new_picture_location
 
     def start_polling(self):
         if self.__started_without_polling_flag:
@@ -116,15 +123,11 @@ class BotTele:
     async def send_file_to_chat_id(self, file_location=None):
         bot = telegram.Bot(self.__TOKEN)
         if file_location:
-            depfuns.file_checker()
-
-
-
-        return
+            depfuns.file_checker(file_location)
 
     def update_files_list(self):
         now_files_list_amount = self.__files_list_amount
-        self.__files_list, self.__files_list_amount = depfuns.get_files_in_dir(self.__PICTURE_LOCATION_DEFAULT)
+        self.__files_list, self.__files_list_amount = depfuns.get_files_in_dir(self.__picture_location)
         return self.__files_list_amount - now_files_list_amount
 
     def __time_checker(self, event_signal: threading.Event):  # TODO: change time into file
@@ -215,6 +218,6 @@ class BotTele:
         if self.__PRIVATE:
             if str(update.effective_user.id) == self.__USER_ID:
                 await context.bot.send_message(chat_id=update.effective_chat.id,
-                                               text=(str(self.picture_index_current) + "/" +
-                                                     str(self.files_in_dir_amount) + "\n" +
-                                                     str(self.files_types_in_dir)))
+                                               text=(str(self.__pictures_index) + "/" +
+                                                     str(self.__files_list_amount) + "\n" +
+                                                     str(self.files_types_in_list)))
