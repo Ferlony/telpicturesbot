@@ -122,8 +122,33 @@ class BotTele(ConfigClass):
     # TODO
     async def send_file_to_chat_id(self, file_location=None):
         bot = telegram.Bot(self.__TOKEN)
+        # bot.send_document
+        file_type = None
+
         if file_location:
-            depfuns.file_checker(file_location)
+            file_type = depfuns.file_checker(file_location)
+        else:
+            file_type = depfuns.file_checker(self.__files_list[self.__pictures_index])
+
+        if file_type == "picture":
+            # bot.send_photo()
+            pass
+        elif file_type == "animation":
+            # bot.send_animation
+            pass
+        elif file_type == "video":
+            # bot.send_video
+            pass
+        else:
+            # bot.send_message()
+            # print
+            pass
+
+        if file_location:
+            return
+        else:
+            if file_type:
+                self.pictures_index += 1
 
     def update_files_list(self):
         now_files_list_amount = self.__files_list_amount
@@ -141,6 +166,7 @@ class BotTele(ConfigClass):
                     or time_now == "16" or time_now == "18" \
                     or time_now == "20" or time_now == "22":
                 asyncio.run(self.send_file_to_chat_id())
+                time.sleep()
 
         self.__threads.clear()
         print("Received StopSignal, ending ", name)

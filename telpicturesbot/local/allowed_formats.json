@@ -1,1 +1,18 @@
-{"file_type": [".mp4", ".gif", ".png", ".MOV", ".webp", ".GIF", ".jpeg", ".PNG", ".jpg"]}
+{
+  "picture": [
+    ".png",
+    ".webp",
+    ".jpeg",
+    ".PNG",
+    ".jpg",
+    ".JPG",
+    ".JPEG"
+  ],
+  "animation": [
+    ".gif"
+  ],
+  "video": [
+    ".mp4",
+    ".MOV"
+  ]
+}
