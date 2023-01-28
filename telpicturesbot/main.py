@@ -22,7 +22,9 @@ def main():
     PICTURE_LOCATION_DEFAULT = "local" + sep + "pictures" + sep + config["DEFAULT"]["picture_location_default"]
 
     # try:
-    menus.Menu(bot_tele.BotTele(TOKEN, USER_ID, CHAT_ID, PRIVATE, CONFIG_PATH, PICTURE_LOCATION_DEFAULT)).main_menu()
+    menus.Menu(bot_tele.BotTele(TOKEN, USER_ID,
+                                CHAT_ID, PRIVATE,
+                                CONFIG_PATH, PICTURE_LOCATION_DEFAULT)).main_menu()
     # except Exception as e:
     #     print(e)
 

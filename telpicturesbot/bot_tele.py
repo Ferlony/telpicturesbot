@@ -19,7 +19,8 @@ class BotTele(ConfigClass):
         self.__PRIVATE = private
 
         self.__picture_location = picture_location_default
-        self.__pictures_index = self.get_key_value_in_config(self.__picture_location)
+
+        self.__pictures_index = int(self.get_key_value_in_config(self.__picture_location))
 
         self.__files_list, self.__files_list_amount = depfuns.get_files_in_dir(self.__picture_location)
 
@@ -27,6 +28,7 @@ class BotTele(ConfigClass):
 
     __time_checker_name = "time_checker"
     __started_without_polling_flag = False
+    __time_checker_sleep_time_s = 7000
 
     @property
     def files_list(self):
@@ -42,11 +44,12 @@ class BotTele(ConfigClass):
 
     @property
     def pictures_index(self):
-        return self.__pictures_index
+        return int(self.__pictures_index)
 
     @pictures_index.setter
     def pictures_index(self, value):
-        self.__pictures_index = self.set_key_value_in_config(self.__picture_location, value)
+        self.set_key_value_in_config(self.__picture_location, value)
+        self.__pictures_index = self.read_key_from_config(self.__picture_location)
 
     @property
     def picture_location(self):
@@ -55,6 +58,7 @@ class BotTele(ConfigClass):
     @picture_location.setter
     def picture_location(self, new_picture_location):
         self.__picture_location = new_picture_location
+        self.update_files_list()
 
     def start_polling(self):
         if self.__started_without_polling_flag:
@@ -122,33 +126,43 @@ class BotTele(ConfigClass):
     # TODO
     async def send_file_to_chat_id(self, file_location=None):
         bot = telegram.Bot(self.__TOKEN)
-        # bot.send_document
+        file_to_send_renamed = None
         file_type = None
 
         if file_location:
             file_type = depfuns.file_checker(file_location)
+            if file_type:
+                # file_to_send_renamed = depfuns.rename_one_file_by_hash(file_location)  # TODO
+                pass
         else:
-            file_type = depfuns.file_checker(self.__files_list[self.__pictures_index])
+            file_type = depfuns.file_checker(self.__files_list[self.pictures_index])
+            if file_type:
+                file_to_send_renamed = depfuns.rename_one_file_by_hash(self.__picture_location,
+                                                                       self.__files_list[self.pictures_index])
 
         if file_type == "picture":
-            # bot.send_photo()
-            pass
+            await bot.send_photo(photo=file_to_send_renamed, chat_id=self.__CHAT_ID)
+            print("Picture ", self.__files_list[self.pictures_index], " sent renamed")
         elif file_type == "animation":
-            # bot.send_animation
-            pass
+            await bot.send_animation(animation=file_to_send_renamed, chat_id=self.__CHAT_ID)
+            print("Animation ", self.__files_list[self.pictures_index], " sent renamed")
         elif file_type == "video":
-            # bot.send_video
-            pass
+            await bot.send_video(video=file_to_send_renamed, chat_id=self.__CHAT_ID)
+            print("Video ", self.__files_list[self.pictures_index], " sent renamed")
         else:
-            # bot.send_message()
-            # print
-            pass
+            await bot.send_message(text=("Could not send " + self.__files_list[self.pictures_index]),
+                                   chat_id=self.__USER_ID)
+            print("Could not send ", self.__files_list[self.pictures_index])
 
         if file_location:
             return
         else:
             if file_type:
-                self.pictures_index += 1
+                if self.pictures_index < self.files_list_amount - 1:
+                    now_picture_index = self.pictures_index + 1
+                    self.pictures_index = now_picture_index
+                else:
+                    self.pictures_index = 0
 
     def update_files_list(self):
         now_files_list_amount = self.__files_list_amount
@@ -166,7 +180,7 @@ class BotTele(ConfigClass):
                     or time_now == "16" or time_now == "18" \
                     or time_now == "20" or time_now == "22":
                 asyncio.run(self.send_file_to_chat_id())
-                time.sleep()
+                time.sleep(self.__time_checker_sleep_time_s)
 
         self.__threads.clear()
         print("Received StopSignal, ending ", name)
@@ -177,7 +191,8 @@ class BotTele(ConfigClass):
         while not event_signal.is_set():
             print(counter)
             counter += 1
-            time.sleep(5)
+            asyncio.run(self.send_file_to_chat_id())
+            time.sleep(20)
 
         self.__threads.clear()
         print("Received StopSignal, ending ", name)

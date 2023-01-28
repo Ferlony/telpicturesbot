@@ -1,4 +1,6 @@
 import configparser
+from depfuns import get_folder_name
+from os import sep
 
 
 class ConfigClass:
@@ -28,7 +30,7 @@ class ConfigClass:
         return
 
     def read_key_from_config(self, key):
-        key += "_index"
+        key = get_folder_name(key + sep).replace(sep, "") + "_index"  # TODO change it
 
         config = configparser.ConfigParser()
         config.read(self.__config_path)
@@ -38,9 +40,10 @@ class ConfigClass:
                 return config[self.__section][key]
 
     def set_key_value_in_config(self, key, value):
+        key = get_folder_name(key + sep).replace(sep, "") + "_index"  # TODO change it
+
         config = configparser.ConfigParser()
         config.read(self.__config_path)
-        key += "_index"
 
         try:
             if config[self.__section]:
@@ -50,9 +53,9 @@ class ConfigClass:
 
         try:
             if config[self.__section][key]:
-                config[self.__section][key] = value
+                config[self.__section][key] = str(value)
         except KeyError:
-            config.set(self.__section, key, value)
+            config.set(self.__section, key, str(value))
 
         with open(self.__config_path, "w") as config_file:
             config.write(config_file)

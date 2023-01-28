@@ -1,6 +1,10 @@
 import os
 import json
+from os import path
 from os import sep
+import xxhash
+from os import mkdir
+from shutil import rmtree, copy
 
 
 def get_files_in_dir(directory):
@@ -48,3 +52,47 @@ def file_checker(file):
             return key
 
     return None
+
+
+def create_folder(new_dir, file_location_path, renamed_files_folder):
+    try:
+        mkdir(new_dir)
+    except:
+        try:
+            mkdir(file_location_path + renamed_files_folder)
+            mkdir(new_dir)
+        except:
+            rmtree(new_dir)
+            mkdir(new_dir)
+    return
+
+
+def get_folder_name(folder):  # TODO delete it
+    if folder[-1] == sep:
+        string_name = ""
+        i = -1
+        while True:
+            i -= 1
+            if folder[i] == sep:
+                string_name = sep + str(string_name[::-1])
+                return string_name
+            string_name += folder[i]
+    else:
+        return sep + "SomeFileName"
+
+
+def rename_one_file_by_hash(picture_location, file):
+    file_location_path = path.dirname(__file__)
+    dir_name = get_folder_name(picture_location + sep)  # TODO change it
+    renamed_files_folder = sep + "local" + sep + "pictures" + sep + "sentfiles"
+    new_dir = file_location_path + renamed_files_folder + dir_name
+
+    create_folder(new_dir, file_location_path, renamed_files_folder)
+
+    file_name, file_extension = path.splitext(file)
+    file_hash = xxhash.xxh3_128_hexdigest(file_name)
+
+    renamed_file = file_hash + file_extension
+
+    copy(picture_location + sep + file, new_dir + sep + renamed_file)
+    return str(new_dir + sep + renamed_file)
