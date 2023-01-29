@@ -19,14 +19,14 @@ def main():
     USER_ID = config["SECRETS"]["USER_ID"]
     CHAT_ID = config["SECRETS"]["CHAT_ID"]
     PRIVATE = bool(config["DEFAULT"]["PRIVATE"])
-    PICTURE_LOCATION_DEFAULT = "local" + sep + "pictures" + sep + config["DEFAULT"]["picture_location_default"]
+    PICTURE_LOCATION_DEFAULT = config["DEFAULT"]["picture_location_default"]
 
-    # try:
-    menus.Menu(bot_tele.BotTele(TOKEN, USER_ID,
-                                CHAT_ID, PRIVATE,
-                                CONFIG_PATH, PICTURE_LOCATION_DEFAULT)).main_menu()
-    # except Exception as e:
-    #     print(e)
+    try:
+        menus.Menu(bot_tele.BotTele(TOKEN, USER_ID,
+                                    CHAT_ID, PRIVATE,
+                                    CONFIG_PATH, PICTURE_LOCATION_DEFAULT)).main_menu()
+    except Exception as e:
+        print(e)
 
 
 if __name__ == "__main__":

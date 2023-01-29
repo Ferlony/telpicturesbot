@@ -96,3 +96,20 @@ def rename_one_file_by_hash(picture_location, file):
 
     copy(picture_location + sep + file, new_dir + sep + renamed_file)
     return str(new_dir + sep + renamed_file)
+
+
+def rename_one_file_by_hash_one(file):
+    file_location_path = path.dirname(__file__)
+    dir_name = "SomeSingleFileByHand"
+    renamed_files_folder = sep + "local" + sep + "pictures" + sep + "sentfiles"
+    new_dir = file_location_path + renamed_files_folder + dir_name
+
+    create_folder(new_dir, file_location_path, renamed_files_folder)
+
+    file_name, file_extension = path.splitext(file)
+    file_hash = xxhash.xxh3_128_hexdigest(file_name)
+
+    renamed_file = file_hash + file_extension
+
+    copy(file, new_dir + sep + renamed_file)
+    return str(new_dir + sep + renamed_file)

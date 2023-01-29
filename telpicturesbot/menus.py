@@ -1,6 +1,8 @@
 from bot_tele import BotTele
 from depfuns import conformation
 import asyncio
+import os
+import signal
 
 
 class Menu:
@@ -18,6 +20,7 @@ class Menu:
                   "'6' Send message to chat id\n"
                   "'7' Send file to chat id\n"
                   "'8' Edit config\n"
+                  "'9' Set bot new file location\n"
                   "'0' Close program")
             inp = input()
             if inp == "1":
@@ -35,17 +38,25 @@ class Menu:
             elif inp == "5":
                 self.__get_info_menu()
             elif inp == "6":
-                message = input("Input message")
-                print(asyncio.run(self.bot_tele.send_message_to_chat_id(message)))
-            elif inp == "7":
-                file = input("Input absolute file location")
+                print("Input message")
+                message = input()
                 if conformation():
-                    self.bot_tele.send_file_to_chat_id(file)
+                    print(asyncio.run(self.bot_tele.send_message_to_chat_id(message)))
+            elif inp == "7":
+                print("Input absolute file location")
+                file = input()
+                if conformation():
+                    print(asyncio.run(self.bot_tele.send_file_to_chat_id(file)))
             elif inp == "8":
                 pass  # TODO: edit config menu and json creator
+            elif inp == "9":
+                print("Enter new file location")
+                new_picture_location = input()
+                if conformation():
+                    self.bot_tele.picture_location = new_picture_location
             elif inp == "0":
                 print("Closing program")
-                break
+                os.kill(os.getpid(), signal.SIGINT)
             else:
                 print("Wrong input")
 
@@ -53,7 +64,7 @@ class Menu:
         while True:
             print("'1' Get bot info\n"
                   "'2' Get user update info\n"
-                  "'3' Get files in dir and their status\n"
+                  "'3' Get files in dir status\n"
                   "'4' Get files in dir extensions\n"
                   "'0' Back")
             inp = input()
@@ -62,8 +73,8 @@ class Menu:
             elif inp == "2":
                 print(asyncio.run(self.bot_tele.get_update_info()))  # Should send message to the bot
             elif inp == "3":
-                print("Files in dir:\n", self.bot_tele.files_list)
-                print("Files status:\n", str(self.bot_tele.pictures_index) + "/" +
+                # print("Files in dir:\n", self.bot_tele.files_list)
+                print("Files status:\n", str(self.bot_tele.pictures_index + 1) + "/" +
                       str(self.bot_tele.files_list_amount))
             elif inp == "4":
                 print("Files extensions:\n", self.bot_tele.files_types_in_list)
