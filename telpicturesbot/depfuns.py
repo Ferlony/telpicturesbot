@@ -1,16 +1,13 @@
-import os
 import json
-from os import path
-from os import sep
 import xxhash
-from os import mkdir
+from os import path, walk, sep, mkdir
 from shutil import rmtree, copy
 
 
 def get_files_in_dir(directory):
     files_list = []
     counter = 0
-    for root, dirs, files in os.walk(directory):
+    for root, dirs, files in walk(directory):
         for filename in files:
             files_list.append(filename)
             counter += 1
@@ -20,7 +17,7 @@ def get_files_in_dir(directory):
 def get_file_types_in_list(some_list):
     file_extensions = []
     for i in range(0, len(some_list)):
-        file_name, file_extension = os.path.splitext(some_list[i])
+        file_name, file_extension = path.splitext(some_list[i])
         file_extensions.append(file_extension)
 
     file_extensions_set = set(file_extensions)
@@ -45,7 +42,7 @@ def file_checker(file):
     with open(json_file_location, "r") as json_file:
         allowed_formats = json.load(json_file)
 
-    file_name, file_extension = os.path.splitext(file)
+    file_name, file_extension = path.splitext(file)
 
     for key, types in allowed_formats.items():
         if file_extension in types:

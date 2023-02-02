@@ -24,10 +24,48 @@ class ConfigClass:
     def section(self, section):
         self.__section = section
 
-    # TODO
-    @staticmethod
-    def create_config(path):
-        return
+    def create_config(self):
+        print("Enter your token")
+        token = input()
+        print("Enter your user id")
+        user_id = input()
+        print("Enter chat id")
+        chat_id = input()
+        print("Enter files location")
+        file_location = input()
+
+        file = open(self.__config_path, "w")
+        file.write("[DEFAULT]\n"
+                   "private = True\n"
+                   "picture_location_default = " + file_location + "\n"
+                   "\n"
+                   "[SECRETS]\n"
+                   "token = " + token + "\n"
+                   "user_id = " + user_id + "\n"
+                   "chat_id = " + chat_id + "\n"
+                   "\n"
+                   "[INDEXES]\n")
+        file.close()
+        print("Config created")
+
+    def edit_value_by_key(self, key, value):
+        config = configparser.ConfigParser()
+        config.read(self.__config_path)
+
+        try:
+            if config[self.__section]:
+                pass
+        except KeyError:
+            config.add_section(self.__section)
+
+        try:
+            if config[self.__section][key]:
+                config[self.__section][key] = str(value)
+        except KeyError:
+            config.set(self.__section, key, str(value))
+
+        with open(self.__config_path, "w") as config_file:
+            config.write(config_file)
 
     def read_key_from_config(self, key):
         key = get_folder_name(key + sep).replace(sep, "") + "_index"  # TODO change it

@@ -9,7 +9,8 @@
     ".JPEG"
   ],
   "animation": [
-    ".gif"
+    ".gif",
+    ".GIF"
   ],
   "video": [
     ".mp4",

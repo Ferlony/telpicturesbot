@@ -27,7 +27,7 @@ class BotTele(ConfigClass):
 
     __time_checker_name = "time_checker"
     __started_without_polling_flag = False
-    __time_checker_sleep_time_s = 7000
+    __time_checker_sleep_time_s = 60  # 7000
 
     @property
     def files_list(self):
@@ -72,7 +72,6 @@ class BotTele(ConfigClass):
             update_files_handler = telegram.ext.CommandHandler("update", self.__update)
             get_info_handler = telegram.ext.CommandHandler("info", self.__info)
 
-            # TODO add change default bot file location handler
             application.add_handler(start_handler)
             application.add_handler(stop_handler)
             application.add_handler(kill_handler)
