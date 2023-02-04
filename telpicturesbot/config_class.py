@@ -31,12 +31,15 @@ class ConfigClass:
         user_id = input()
         print("Enter chat id")
         chat_id = input()
+        print("Enter sleep time")
+        sleep_time = input()
         print("Enter files location")
         file_location = input()
 
         file = open(self.__config_path, "w")
         file.write("[DEFAULT]\n"
                    "private = True\n"
+                   "sleep_time = " + sleep_time + "\n"
                    "picture_location_default = " + file_location + "\n"
                    "\n"
                    "[SECRETS]\n"

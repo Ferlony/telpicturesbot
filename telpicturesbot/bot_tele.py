@@ -10,7 +10,7 @@ from config_class import ConfigClass
 
 
 class BotTele(ConfigClass):
-    def __init__(self, token, user_id, chat_id, private, config_path, picture_location_default):
+    def __init__(self, token, user_id, chat_id, private, config_path, picture_location_default, sleep_time):
         ConfigClass.__init__(self, config_path, "INDEXES")
         self.__TOKEN = token
         self.__USER_ID = user_id
@@ -23,11 +23,14 @@ class BotTele(ConfigClass):
 
         self.__files_list, self.__files_list_amount = depfuns.get_files_in_dir(self.__picture_location)
 
+        self.__sleep_sending_time = sleep_time
+
     __threads = {}
 
     __time_checker_name = "time_checker"
     __started_without_polling_flag = False
-    __time_checker_sleep_time_s = 60  # 7000
+
+    __time_checker_sleep_error = 30
 
     @property
     def files_list(self):
@@ -49,6 +52,14 @@ class BotTele(ConfigClass):
     def pictures_index(self, value):
         self.set_key_value_in_config(self.__picture_location, value)
         self.__pictures_index = self.read_key_from_config(self.__picture_location)
+
+    @property
+    def sleep_sending_time(self):
+        return self.__sleep_sending_time
+
+    @sleep_sending_time.setter
+    def sleep_sending_time(self, value):
+        self.__sleep_sending_time = int(value)
 
     @property
     def picture_location(self):
@@ -131,10 +142,10 @@ class BotTele(ConfigClass):
             if file_type:
                 file_to_send_renamed = depfuns.rename_one_file_by_hash_one(file_location)
         else:
-            file_type = depfuns.file_checker(self.__files_list[self.pictures_index])
+            file_type = depfuns.file_checker(self.files_list[self.pictures_index])
             if file_type:
-                file_to_send_renamed = depfuns.rename_one_file_by_hash(self.__picture_location,
-                                                                       self.__files_list[self.pictures_index])
+                file_to_send_renamed = depfuns.rename_one_file_by_hash(self.picture_location,
+                                                                       self.files_list[self.pictures_index])
 
         if file_type == "picture":
             async with bot:
@@ -181,8 +192,14 @@ class BotTele(ConfigClass):
     def __time_checker(self, event_signal: threading.Event):
         name = threading.current_thread().name
         while not event_signal.is_set():
-            asyncio.run(self.send_file_to_chat_id())
-            time.sleep(self.__time_checker_sleep_time_s)
+            while not event_signal.is_set():
+                try:
+                    asyncio.run(self.send_file_to_chat_id())
+                    break
+                except Exception as e:
+                    print(e)
+                    time.sleep(self.__time_checker_sleep_error)
+            time.sleep(self.sleep_sending_time)
 
         print("Received StopSignal, ending ", name)
 

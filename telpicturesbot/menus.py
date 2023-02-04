@@ -19,9 +19,8 @@ class Menu:
                   "'4' Update files in dir\n"
                   "'5' Get info menu\n"
                   "'6' Send menu\n"
-                  "'7' Set bot new file location\n"
-                  "'8' Set bot file index\n"
-                  "'9' Edit config\n"
+                  "'7' Set bot menu\n"
+                  "'8' Edit config\n"
                   "'0' Close program")
             inp = input()
             if inp == "1":
@@ -41,16 +40,8 @@ class Menu:
             elif inp == "6":
                 self.__send_menu()
             elif inp == "7":
-                print("Enter new file location")
-                new_picture_location = input()
-                if conformation():
-                    self.bot_tele.picture_location = new_picture_location
+                self.__set_bot_menu()
             elif inp == "8":
-                print("Enter file index")
-                file_index = int(input())
-                if conformation():
-                    self.bot_tele.pictures_index = file_index
-            elif inp == "9":
                 self.__config_menu()
             elif inp == "0":
                 print("Closing program")
@@ -100,9 +91,10 @@ class Menu:
                     while True:
                         print("Choose Key:\n"
                               "'1' picture_location_default\n"
-                              "'2' chat_id\n"
-                              "'3' user_id\n"
-                              "'4' token\n"
+                              "'2' sleep time\n"
+                              "'3' chat_id\n"
+                              "'4' user_id\n"
+                              "'5' token\n"
                               "'0' Back")
                         new_inp = input()
                         if new_inp == "1":
@@ -112,18 +104,24 @@ class Menu:
                                 ConfigClass(config_path, "DEFAULT").edit_value_by_key("picture_location_default",
                                                                                       new_file_location)
                         elif new_inp == "2":
+                            print("Enter sleep time")
+                            new_sleep_time = input()
+                            if conformation():
+                                ConfigClass(config_path, "DEFAULT").edit_value_by_key("sleep_time",
+                                                                                      new_sleep_time)
+                        elif new_inp == "3":
                             print("Enter chat_id")
                             new_chat_id = input()
                             if conformation():
                                 ConfigClass(config_path, "SECRETS").edit_value_by_key("chat_id",
                                                                                       new_chat_id)
-                        elif new_inp == "3":
+                        elif new_inp == "4":
                             print("Enter user_id")
                             new_user_id = input()
                             if conformation():
                                 ConfigClass(config_path, "SECRETS").edit_value_by_key("user_id",
                                                                                       new_user_id)
-                        elif new_inp == "4":
+                        elif new_inp == "5":
                             print("Enter token")
                             new_token = input()
                             if conformation():
@@ -156,6 +154,33 @@ class Menu:
                 file = input()
                 if conformation():
                     print(asyncio.run(self.bot_tele.send_file_to_chat_id(file)))
+            elif inp == "0":
+                break
+            else:
+                print("Wrong input")
+
+    def __set_bot_menu(self):
+        while True:
+            print("'1' Set bot new file location\n"
+                  "'2' Set bot file index\n"
+                  "'3' Set bot sleep time"
+                  "'0' Back")
+            inp = input()
+            if inp == "1":
+                print("Enter new file location")
+                new_picture_location = input()
+                if conformation():
+                    self.bot_tele.picture_location = new_picture_location
+            elif inp == "2":
+                print("Enter file index")
+                file_index = int(input())
+                if conformation():
+                    self.bot_tele.pictures_index = file_index
+            elif inp == "3":
+                print("Enter new sleep time")
+                new_sleep_time = int(input())
+                if conformation():
+                    self.bot_tele.sleep_sending_time = new_sleep_time
             elif inp == "0":
                 break
             else:

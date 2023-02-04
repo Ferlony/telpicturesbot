@@ -21,11 +21,12 @@ def main():
     CHAT_ID = config["SECRETS"]["CHAT_ID"]
     PRIVATE = bool(config["DEFAULT"]["PRIVATE"])
     PICTURE_LOCATION_DEFAULT = config["DEFAULT"]["picture_location_default"]
+    SLEEP_TIME = int(config["DEFAULT"]["sleep_time"])
 
     try:
         menus.Menu(bot_tele.BotTele(TOKEN, USER_ID,
                                     CHAT_ID, PRIVATE,
-                                    CONFIG_PATH, PICTURE_LOCATION_DEFAULT)).main_menu()
+                                    CONFIG_PATH, PICTURE_LOCATION_DEFAULT, SLEEP_TIME)).main_menu()
     except Exception as e:
         print(e)
 
