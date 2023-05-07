@@ -203,6 +203,16 @@ class BotTele(ConfigClass):
 
         print("Received StopSignal, ending ", name)
 
+    def start_without_polling_in_bg(self):
+        while True:
+            try:
+                asyncio.run(self.send_file_to_chat_id())
+                break
+            except Exception as e:
+                print(e)
+                time.sleep(self.__time_checker_sleep_error)
+            time.sleep(self.sleep_sending_time)
+
     def __stop_thr(self, event_signal: threading.Event):
         if event_signal.is_set():
             print("Nothing to stop")
