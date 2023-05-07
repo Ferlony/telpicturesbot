@@ -211,7 +211,7 @@ class BotTele(ConfigClass):
             except Exception as e:
                 print(e)
                 time.sleep(self.__time_checker_sleep_error)
-            time.sleep(self.sleep_sending_time)
+        time.sleep(self.sleep_sending_time)
 
     def __stop_thr(self, event_signal: threading.Event):
         if event_signal.is_set():
