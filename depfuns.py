@@ -110,3 +110,4 @@ def rename_one_file_by_hash_one(file):
 
     copy(file, new_dir + sep + renamed_file)
     return str(new_dir + sep + renamed_file)
+
