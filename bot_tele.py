@@ -198,13 +198,14 @@ class BotTele(BotTeleData):
 
     def start_without_polling_in_bg(self):
         while True:
-            #while True:
             start_time = datetime.now().timestamp()
-            try:
-                asyncio.run(self.send_file_to_chat_id())
-            except Exception as e:
-                print(e)
-                #time.sleep(self.__time_checker_sleep_error)
+            while True:
+                try:
+                    asyncio.run(self.send_file_to_chat_id())
+                    break
+                except Exception as e:
+                    print(e)
+                    time.sleep(self.__time_checker_sleep_error)
             execution_time = datetime.now().timestamp() - start_time
             time.sleep(float(self.sleep_sending_time) - execution_time)
 
